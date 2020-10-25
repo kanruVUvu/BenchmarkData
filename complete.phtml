@@ -1,0 +1,499 @@
+<?php 
+include "config.php";
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+* {box-sizing: border-box}
+body {font-family: "Lato", sans-serif;}
+
+/* Style the tab */
+.tab {
+  float: left;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  width: 15%;
+  height: 750px;
+   rotation-point: 50% 50%;
+  rotation: 90deg;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+  display: block;
+  background-color: blue;
+  color: black;
+  padding: 22px 16px;
+  width: 100%;
+  border: none;
+  outline: none;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.3s;
+  font-size: 17px;
+}
+
+/* Change background color of buttons on hover */
+.tab button:hover {
+  background-color: yellow;
+}
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+  background-color: orange;
+}
+
+/* Style the tab content */
+.consol {
+  float: right;
+  padding: 0px 12px;
+  border: 1px solid #ccc;
+  width: 85%;
+  border-left: none;
+  height: 1000px;
+}
+
+/* Rotate the Consolidated Data Table by 90 degrees */
+#cdt {
+ rotation-point: 50% 50%;
+  rotation: 90deg;
+}
+
+/* Rotate the Ride Data Table Text by 90 degrees */
+#rdt {
+ rotation-point: 50% 50%;
+  rotation: 90deg;
+}
+
+h2 
+{
+rotation-point: 50% 50%;
+  rotation: 90deg;
+}
+
+p
+{
+rotation-point: 50% 50%;
+  rotation: 90deg;
+}
+
+</style>
+</head>
+<body>
+<!-- CSS -->
+   <link href='jquery-ui.min.css' rel='stylesheet' type='text/css'>
+
+   <!-- Script -->
+   <script src='jquery-3.3.1.js' type='text/javascript'></script>
+   <script src='jquery-ui.min.js' type='text/javascript'></script>
+   <script type='text/javascript'>
+   $(document).ready(function(){
+    $('.dateFilter').datepicker({
+        dateFormat: "mm/dd/yy"
+     });
+  });
+   </script>
+<h2><u>Tab Details</u></h2>
+<p>Click on the buttons inside the tabbed menu:</p>
+
+<div class="tab">
+  <button class="tablinks" onclick="openTable(event, 'cdt')" id="defaultOpen" style="position:relative;text-align:left">Consolidated Data Table</button>
+  <button class="tablinks" onclick="openTable(event, 'rdt')" style="position:relative;text-align:left">Ride Data Table</button>
+</div>
+
+<div id="cdt" class="consol">
+ <h4><u>Consolidated Data Table</u></h4>
+   <!-- Search filter -->
+   <form method='post' action="<?php echo $_SERVER['PHP_SELF'];?>">
+     Start Date <input type='date' class='dateFilter' name='fromDate' value='<?php if(isset($_POST['fromDate'])) echo $_POST['fromDate']; ?>'>&nbsp;&nbsp;
+ 
+     End Date <input type='date' class='dateFilter' name='endDate' value='<?php if(isset($_POST['endDate'])) echo $_POST['endDate']; ?>'>&nbsp;&nbsp;
+
+     <input type='submit' name='but_search' value='Search'>
+   </form>
+<br>
+<br>
+   
+ <div class="sprodetails" style="position:relative;text-align:center">
+<input type="text" id="myInput2" onkeyup="myFun()" placeholder="Search for SPro Names" title="Type in a SPro name">
+</div>
+<br>
+<br> 
+
+   <div style='height: 80%; overflow: auto;' >
+ 
+     <table border='1' width='99%' style='border-collapse: collapse;margin-top: 20px;' id="tableabc">
+       <tr style="position:relative;background-color:red">
+         <th>SPro Name</th>
+         <th>Total_Sales</th>
+        <th>Total_Km</th>
+        <th>Total Trips</th>
+          <th>Total_Passengers</th>
+          <th>Trip Time (Mins)</th>
+          <th>Trip Time (Hours)</th>
+          <th>Total_Rs/Trip</th>
+         <th>Total_Rs/Km</th>
+         <th>Total_Rs/Passenger</th>
+          <th>Total_Rs/Hour</th>
+            <th>Total_BenchmarkValue (%)</th>
+       </tr>
+<?php
+$emp_query2 = "SELECT * FROM Ride_Data_Table WHERE 1 ";
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+          $fromDate = $_POST['fromDate'];
+         
+          $endDate = $_POST['endDate'];
+          
+          $Total_Sales=0;
+          $Total_Km=0;
+          $Total_Passengers=0;
+          $Total_RsTrip=0;
+          $Total_RsKm=0;
+          $Total_RsPassenger=0;
+          $Total_Mins=0;
+          $Total_RsHour=0;
+          $Total_BenchmarkValue=0;
+          
+          $Total_Sales2=0;
+          $Total_Km2=0;
+          $Total_Passengers2=0;
+          $Total_RsTrip2=0;
+          $Total_RsKm2=0;
+          $Total_RsPassenger2=0;
+          $Total_Mins2=0;
+          $Total_RsHour2=0;
+          $Total_BenchmarkValue2=0;
+          
+          $Total_Sales3=0;
+          $Total_Km3=0;
+          $Total_Passengers3=0;
+          $Total_RsTrip3=0;
+          $Total_RsKm3=0;
+          $Total_RsPassenger3=0;
+          $Total_Mins3=0;
+          $Total_RsHour3=0;
+          $Total_BenchmarkValue3=0;
+          
+          $Total_Sales4=0;
+          $Total_Km4=0;
+          $Total_Passengers4=0;
+          $Total_RsTrip4=0;
+          $Total_RsKm4=0;
+          $Total_RsPassenger4=0;
+          $Total_Mins4=0;
+          $Total_RsHour4=0;
+          $Total_BenchmarkValue4=0;
+          
+          $a=0;
+          $b=0;
+          $c=0;
+          
+          if(!empty($fromDate) && !empty($endDate)){
+           
+             $emp_query2 = "SELECT * FROM Ride_Data_Table WHERE Date 
+                          BETWEEN '".$fromDate."' AND '".$endDate."' ";
+          }
+        }
+    
+$emp_query3 = mysqli_query($con,$emp_query2);
+$rowcount=mysqli_num_rows($emp_query3);
+       if($rowcount > 0){
+          
+          while($emp_query6 = mysqli_fetch_assoc($emp_query3)){
+           
+            $Total_Sales=$Total_Sales+$emp_query6['Fare Amount'];
+            $Total_Km=$Total_Km+$emp_query6['Distance in Km'];
+            $Total_Passengers=$Total_Passengers+$emp_query6['No of Passengers'];
+            $Total_Mins=$Total_Mins+$emp_query6['Time of Trip in Mins'];
+            $Total_Hour=$Total_Mins/60;
+            
+            
+           if($emp_query6['SPro Name'] == "MOHANKUMAR V")
+            {
+           
+            $Total_Sales2=$Total_Sales2+$emp_query6['Fare Amount'];
+            $Total_Km2=$Total_Km2+$emp_query6['Distance in Km'];
+            $a=$a+1;
+            $Total_Passengers2=$Total_Passengers2+$emp_query6['No of Passengers'];
+            $Total_Mins2=$Total_Mins2+$emp_query6['Time of Trip in Mins'];
+            $Total_Hour2=$Total_Mins2/60; 
+            } 
+            
+            if($emp_query6['SPro Name'] == "RAVI B")
+            {
+            
+            $Total_Sales3=$Total_Sales3+$emp_query6['Fare Amount'];
+            $Total_Km3=$Total_Km3+$emp_query6['Distance in Km'];
+            $b=$b+1;
+            $Total_Passengers3=$Total_Passengers3+$emp_query6['No of Passengers'];
+            $Total_Mins3=$Total_Mins3+$emp_query6['Time of Trip in Mins'];
+            $Total_Hour3=$Total_Mins3/60; 
+            } 
+            
+             if($emp_query6['SPro Name'] == "MANJUNATHA S")
+            {
+            
+            $Total_Sales4=$Total_Sales4+$emp_query6['Fare Amount'];
+            $Total_Km4=$Total_Km4+$emp_query6['Distance in Km'];
+            $c=$c+1;
+            $Total_Passengers4=$Total_Passengers4+$emp_query6['No of Passengers'];
+            $Total_Mins4=$Total_Mins4+$emp_query6['Time of Trip in Mins'];
+            $Total_Hour4=$Total_Mins4/60; 
+            } 
+            
+            }
+       }
+     
+        
+        $Total_RsTrip = ($Total_Sales)/($rowcount);
+        $Total_RsKm = ($Total_Sales)/($Total_Km);
+        $Total_RsPassenger = ($Total_Sales)/($Total_Passengers);
+        $Total_RsHour = ($Total_Sales)/($Total_Mins*60);
+        $Total_BenchmarkValue = (((($Total_RsKm)/13)+(($Total_RsPassenger)/65)+(($Total_RsHour)/130))/3)*100;
+        
+        $Total_RsTrip2 = ($Total_Sales2)/($a);
+        $Total_RsKm2 = ($Total_Sales2)/($Total_Km2);
+        $Total_RsPassenger2 = ($Total_Sales2)/($Total_Passengers2);
+        $Total_RsHour2 = ($Total_Sales2)/($Total_Mins2*60);
+        $Total_BenchmarkValue2 = (((($Total_RsKm2)/13)+(($Total_RsPassenger2)/65)+(($Total_RsHour2)/130))/3)*100;
+        
+        $Total_RsTrip3 = ($Total_Sales3)/($b);
+        $Total_RsKm3 = ($Total_Sales3)/($Total_Km3);
+        $Total_RsPassenger3 = ($Total_Sales3)/($Total_Passengers3);
+        $Total_RsHour3 = ($Total_Sales3)/($Total_Mins3*60);
+        $Total_BenchmarkValue3 = (((($Total_RsKm3)/13)+(($Total_RsPassenger3)/65)+(($Total_RsHour3)/130))/3)*100;
+        
+        $Total_RsTrip4 = ($Total_Sales4)/($c);
+        $Total_RsKm4 = ($Total_Sales4)/($Total_Km4);
+        $Total_RsPassenger4 = ($Total_Sales4)/($Total_Passengers4);
+        $Total_RsHour4 = ($Total_Sales4)/($Total_Mins4*60);
+        $Total_BenchmarkValue4 = (((($Total_RsKm4)/13)+(($Total_RsPassenger4)/65)+(($Total_RsHour4)/130))/3)*100;
+        
+           echo "<tr style=position:relative;background-color:yellow>";
+            echo "<td>". "All" ."</td>";
+            echo "<td>". $Total_Sales ."</td>";
+            echo "<td>". $Total_Km  ."</td>";
+            echo "<td>". $rowcount  ."</td>";
+            echo "<td>". $Total_Passengers ."</td>";
+            echo "<td>". $Total_Mins ."</td>";
+            echo "<td>". round($Total_Hour,2) ."</td>";
+            echo "<td>". round($Total_RsTrip,2) ."</td>";
+            echo "<td>". round($Total_RsKm,2) ."</td>";
+            echo "<td>". round($Total_RsPassenger,2) ."</td>";
+            echo "<td>". round($Total_RsHour,2) ."</td>";
+            echo "<td>". round($Total_BenchmarkValue,2) ."</td>";
+            echo "</tr>";
+            echo "<tr style=position:relative;background-color:yellow>";
+          echo "<td>". "MOHANKUMAR V" ."</td>";
+            echo "<td>". $Total_Sales2 ."</td>";
+            echo "<td>". $Total_Km2 ."</td>";
+            echo "<td>". $a  ."</td>";
+            echo "<td>". $Total_Passengers2 ."</td>";
+           echo "<td>". $Total_Mins2 ."</td>";
+           echo "<td>". round($Total_Hour2,2) ."</td>";
+            echo "<td>". round($Total_RsTrip2,2) ."</td>";
+            echo "<td>". round($Total_RsKm2,2) ."</td>";
+            echo "<td>". round($Total_RsPassenger2,2) ."</td>";
+            echo "<td>". round($Total_RsHour2,2) ."</td>";
+            echo "<td>". round($Total_BenchmarkValue2,2) ."</td>";
+            "</tr>"; 
+            echo "<tr style=position:relative;background-color:yellow>";
+          echo "<td>". "RAVI B" ."</td>";
+            echo "<td>". $Total_Sales3 ."</td>";
+            echo "<td>". $Total_Km3 ."</td>";
+            echo "<td>". $b  ."</td>";
+            echo "<td>". $Total_Passengers3 ."</td>";
+           echo "<td>". $Total_Mins3 ."</td>";
+           echo "<td>". round($Total_Hour3,2) ."</td>";
+            echo "<td>". round($Total_RsTrip3,2) ."</td>";
+            echo "<td>". round($Total_RsKm3,2) ."</td>";
+            echo "<td>". round($Total_RsPassenger3,2) ."</td>";
+            echo "<td>". round($Total_RsHour3,2) ."</td>";
+            echo "<td>". round($Total_BenchmarkValue3,2) ."</td>";
+            "</tr>";
+            echo "<tr style=position:relative;background-color:yellow>";
+          echo "<td>". "MANJUNATHA S" ."</td>";
+            echo "<td>". $Total_Sales4 ."</td>";
+            echo "<td>". $Total_Km4 ."</td>";
+            echo "<td>". $c ."</td>";
+            echo "<td>". $Total_Passengers4 ."</td>";
+           echo "<td>". $Total_Mins4 ."</td>";
+           echo "<td>". round($Total_Hour4,2) ."</td>";
+            echo "<td>". round($Total_RsTrip4,2) ."</td>";
+            echo "<td>". round($Total_RsKm4,2) ."</td>";
+            echo "<td>". round($Total_RsPassenger4,2) ."</td>";
+            echo "<td>". round($Total_RsHour4,2) ."</td>";
+            echo "<td>". round($Total_BenchmarkValue4,2) ."</td>";
+            "</tr>";
+        ?>
+      </table> 
+      </div>
+<br>
+<br>
+</div>
+
+<div id="rdt" class="consol">
+<h4><u>Ride Data Table</u></h4>
+<br>
+<br>
+ <div class="sprodetails" style="position:relative;text-align:center">
+<input type="text" id="myInput3" onkeyup="myFun2()" placeholder="Search for SPro Names" title="Type in a SPro name">
+</div>
+<br>
+<br> 
+
+   <div style='height: 80%; overflow: auto;' >
+ 
+     <table border='1' width='99%' style='border-collapse: collapse;margin-top: 20px;' id="table2" style="position:relative;background-color:yellow">
+       <tr style="position:relative;background-color:red">
+         <th>Order_ID</th>
+         <th>Date</th>
+         <th>SPro Name</th>
+         <th>Service Type</th>
+          <th>No of Passengers</th>
+         <th>Distance (Km)</th>
+         <th>Fare Amount</th>
+         <th>Start Time</th>
+          <th>End Time</th>
+         <th>Trip Time (Mins)</th>
+         <th>Rs/Km</th>
+         <th>Rs/Passenger</th>
+         <th>Rs/Hour</th>
+         <th>Benchmark_Value (%)</th>
+       </tr>
+
+       <?php
+       $emp_query = "SELECT * FROM Ride_Data_Table";
+       
+       // Date filter
+       if ($_SERVER["REQUEST_METHOD"] == "POST") {
+          $fromDate = $_POST['fromDate'];
+          
+          $endDate = $_POST['endDate'];
+          
+
+          if(!empty($fromDate) && !empty($endDate)){
+             
+             $emp_query = "SELECT * FROM Ride_Data_Table WHERE Date 
+                          BETWEEN '".$fromDate."' AND '".$endDate."' ";
+          }
+        }
+
+        // Sort
+        $emp_query .= " ORDER BY Date ASC";
+        
+        $employeesRecords = mysqli_query($con,$emp_query);
+        
+        $r = mysqli_num_rows($employeesRecords);
+        
+        if($r > 0){
+          while($empRecord = mysqli_fetch_assoc($employeesRecords)){
+            $Order_Id = $empRecord['Order_ID'];
+            $Date = $empRecord['Date'];
+            $SProName = $empRecord['SPro Name'];
+            $Typeofservice = $empRecord['Type of Service'];
+            $noofpassengers = $empRecord['No of Passengers'];
+            $Distance = $empRecord['Distance in Km'];
+            $FareAmount = $empRecord['Fare Amount'];
+            $StartTime = $empRecord['Start Time'];
+            $EndTime = $empRecord['End Time'];
+            $TimeofTrip = $empRecord['Time of Trip in Mins'];
+            $Rskm = $empRecord['Rs/Km'];
+            $RsPassenger = $empRecord['Rs/Passenger'];
+            $RsHour = $empRecord['Rs/Hour'];
+            $BenchmarkValue = $empRecord['Benchmark_Value'];
+            
+
+            echo "<tr style=position:relative;background-color:yellow>";
+            echo "<td>". $Order_Id ."</td>";
+            echo "<td>". $Date  ."</td>";
+            echo "<td>". $SProName ."</td>";
+            echo "<td>". $Typeofservice ."</td>";
+            echo "<td>". $noofpassengers ."</td>";
+            echo "<td>". round($Distance,2) ."</td>";
+            echo "<td>". $FareAmount ."</td>";
+            echo "<td>". $StartTime  ."</td>";
+            echo "<td>". $EndTime ."</td>";
+            echo "<td>". $TimeofTrip  ."</td>";
+            echo "<td>". round($Rskm,2) ."</td>";
+            echo "<td>". round($RsPassenger,2) ."</td>";
+            echo "<td>". round($RsHour,2) ."</td>";
+            echo "<td>". round($BenchmarkValue,2) ."</td>";
+            echo "</tr>";
+          }
+        }else{
+          echo "<tr style=position:relative;background-color:yellow;text-align:center>";
+          echo "<td colspan='14'>No record found.</td>";
+          echo "</tr>";
+        }
+        ?>
+      </table>
+ 
+    </div>
+<br>
+<br>
+</div>
+
+<script>
+function openTable(evt, tableName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("consol");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tableName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+</script>
+
+<script>
+function myFun2() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput3");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("table2");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[2];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+</script>
+<script>
+function myFun() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput2");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("tableabc");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }       
+  }
+}
+</script>
+</body>
+</html> 
